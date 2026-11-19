@@ -14,6 +14,15 @@ export function errorResponse(err: unknown) {
   const msg = err instanceof Error ? err.message : String(err);
   console.error(err);
   const auth = /oidc|api key|unauthori[sz]ed|authentication/i.test(msg);
+  if (/credit card/i.test(msg)) {
+    return Response.json(
+      {
+        error: "AI isn't switched on yet: add a card in your Vercel dashboard under AI Gateway to unlock the free credits, then try again.",
+        detail: msg.slice(0, 300),
+      },
+      { status: 503 },
+    );
+  }
   return Response.json(
     {
       error: auth
